@@ -6,7 +6,7 @@ package sistema_ventas;
 
 
 //import sistema_ventas.Clases.Conector;
-import sistema_ventas.Formularios.Login;
+import sistema_ventas.Formularios.*;
 
 /**
  *
@@ -18,7 +18,7 @@ public class Sistema_Ventas {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-     new Login()
+     new Registro_User()
      .setVisible(true);
      
      

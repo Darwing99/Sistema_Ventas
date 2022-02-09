@@ -11,18 +11,38 @@ package sistema_ventas.Clases;
  * @author HP Envy
  */
 public class Validar_User {
+    public int id;
     public String nombre;
     public String apellido;
     public String correo;
     public String contrasenia;
     public String conf_contrasenia;
+    public int rol;
 
-    public Validar_User(String nombre, String apellido, String correo, String contrasenia,String conf_contrasenia) {
+    public Validar_User(int id,String nombre, String apellido, String correo, String contrasenia,String conf_contrasenia, int rol) {
+        this.id=id;
         this.nombre = nombre;
         this.apellido = apellido;
         this.correo = correo;
         this.contrasenia = contrasenia;
         this.conf_contrasenia=conf_contrasenia;
+        this.rol=rol;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getRol() {
+        return rol;
+    }
+
+    public void setRol(int rol) {
+        this.rol = rol;
     }
 
     public Validar_User() {

@@ -4,23 +4,29 @@
  */
 package sistema_ventas.Formularios;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sistema_ventas.Clases.Consultas;
+import sistema_ventas.Clases.HashTextTest;
 import sistema_ventas.Clases.Validar_User;
-
-
 
 /**
  *
  * @author HP Envy
  */
 public class Login extends javax.swing.JFrame {
-    Consultas consultas=new Consultas();
-    Validar_User user=new Validar_User(); 
+    HashTextTest hash=new HashTextTest();
+    Consultas consultas = new Consultas();
+    Validar_User user = new Validar_User();
+   
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
+     
     }
 
     /**
@@ -109,38 +115,46 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
-        Iniciar();
+        try {
+            Iniciar();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnInicioActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    
-    
-    public void Iniciar(){
-       user.setCorreo(txt_user.getText());
-       user.setContrasenia(String.valueOf(txt_password.getPassword()));
-       if(user.getCorreo().isEmpty()){
-           txt_alerta.setText("Correo vacio!");
-           return;
-       }if(user.getContrasenia().isEmpty())
-       {
-            txt_alerta.setText("contrasenia vacia!");
-       }else{
-           if(consultas.consultaUser(user.getCorreo(), user.getContrasenia())){
-               this.setVisible(false);
-               new Dashboard().setVisible(true);
+  
+    public void Iniciar() throws NoSuchAlgorithmException {
+        user.setCorreo(txt_user.getText());
+        user.setContrasenia(String.valueOf(txt_password.getPassword()));
+        if (user.getCorreo().isEmpty()) {
+            txt_alerta.setText("Correo vacio!");
+            return;
+        }
+        if (user.getContrasenia().isEmpty()) {
+
+            try {
+                txt_alerta.setText("contrasenia vacia!");
+             
+                Thread.sleep(1000);
+                
+                txt_alerta.setText("");
                
-           }else{
-               txt_alerta.setText("usuario no valido!");
-           }
-       }
-     
-        
-        
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } else {
+            if (consultas.consultaUser(user.getCorreo(), hash.sha1(user.getContrasenia()))) {
+                this.setVisible(false);
+                new Dashboard().setVisible(true);
+
+            } else {
+                txt_alerta.setText("usuario no valido!");
+            }
+        }
+
     }
-    
-   
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
