@@ -22,8 +22,7 @@ public class Conector {
             Class.forName("com.mysql.jdbc.Driver");
             try {
                  connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/dbventas","root","");
-                   if(connection!=null)
-                     System.out.print("conectado\n");
+                 
             } catch (SQLException ex) {
                 Logger.getLogger(Conector.class.getName()).log(Level.SEVERE, null, ex);
             }

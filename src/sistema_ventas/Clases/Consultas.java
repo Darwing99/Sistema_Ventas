@@ -72,13 +72,22 @@ public class Consultas {
 
     }
 
-    public LinkedList<Validar_User> getListaUser() {
+    public LinkedList<Validar_User> getListaUser(String busqueda) {
         LinkedList lista = new LinkedList<Validar_User>();
-        String sql_user = sql.getREAD_USER();
+        
+        if(busqueda.isEmpty()){
+            sql_data= sql.getREAD_USER();
+        
+        }else{
+            sql_data=sql.getREAD_USER()+" WHERE nombre like '%"+busqueda+"%' OR apellido like '%"+busqueda+"%'";
+        }
+        
+     
+        
         Validar_User user;
         try {
 
-            PreparedStatement prepared = conector.Conexion().prepareStatement(sql_user);
+            PreparedStatement prepared = conector.Conexion().prepareStatement(sql_data);
             ResultSet result = prepared.executeQuery();
             while (result.next()) {
                 user = new Validar_User(
@@ -86,8 +95,8 @@ public class Consultas {
                         result.getString(2),
                         result.getString(3),
                         result.getString(4),
-                        result.getString(5),
-                        result.getString(5),
+                         "",
+                         "",
                         result.getInt(6)
                 );
                 lista.add(user);

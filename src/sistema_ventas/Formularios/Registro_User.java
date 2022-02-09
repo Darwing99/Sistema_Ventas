@@ -40,7 +40,7 @@ public final class Registro_User extends javax.swing.JFrame {
 
         progressbar.setVisible(false);
         mostrarRol();
-        mostrarUser();
+        mostrarUser("");
 
     }
 
@@ -57,9 +57,9 @@ public final class Registro_User extends javax.swing.JFrame {
 
     
     
-    public void mostrarUser() {
+    public void mostrarUser(String busqueda) {
         LinkedList<Validar_User> users = new LinkedList<Validar_User>();
-        users = consultas.getListaUser();
+        users = consultas.getListaUser(busqueda);
         DefaultTableModel model = (DefaultTableModel) tbl_user.getModel();
         model.setNumRows(0);
         for (int i = 0; i < users.size(); i++) {
@@ -131,7 +131,7 @@ public final class Registro_User extends javax.swing.JFrame {
                     int valor = prepared.executeUpdate();
 
                     JOptionPane.showMessageDialog(null, valor == 1 ? "Guardado" : "no guardado", "Registro de usuario", JOptionPane.INFORMATION_MESSAGE);
-                    mostrarUser();
+                    mostrarUser("");
                 } catch (SQLException ex) {
                     Logger.getLogger(Registro_User.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -162,6 +162,7 @@ public final class Registro_User extends javax.swing.JFrame {
         tbl_user = new javax.swing.JTable();
         btn_guardar1 = new rojeru_san.RSButtonRiple();
         btn_guardar2 = new rojeru_san.RSButtonRiple();
+        txt_busqueda = new rojeru_san.RSMTextFull();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -249,6 +250,14 @@ public final class Registro_User extends javax.swing.JFrame {
         });
         jPanel1.add(btn_guardar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 250, 140, -1));
 
+        txt_busqueda.setPlaceholder("Buscar...");
+        txt_busqueda.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txt_busquedaKeyReleased(evt);
+            }
+        });
+        jPanel1.add(txt_busqueda, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 60, -1, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -294,6 +303,10 @@ public final class Registro_User extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_guardar2ActionPerformed
 
+    private void txt_busquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_busquedaKeyReleased
+         mostrarUser(txt_busqueda.getText());
+    }//GEN-LAST:event_txt_busquedaKeyReleased
+
     /**
      * @param args the command line arguments
      */
@@ -333,6 +346,7 @@ public final class Registro_User extends javax.swing.JFrame {
     private rojerusan.componentes.RSProgressCircle progressbar;
     private javax.swing.JTable tbl_user;
     private rojeru_san.RSMTextFull txt_apellido;
+    private rojeru_san.RSMTextFull txt_busqueda;
     private rojeru_san.RSMPassView txt_conf_contrasenia;
     private rojeru_san.RSMPassView txt_contrasenia;
     private rojeru_san.RSMTextFull txt_correo;
