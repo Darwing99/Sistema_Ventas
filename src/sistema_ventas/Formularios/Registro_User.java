@@ -28,6 +28,7 @@ import sistema_ventas.Clases.Validar_User;
  */
 public final class Registro_User extends javax.swing.JFrame {
 
+    DefaultTableModel model = null;
     HashTextTest hash = new HashTextTest();
     Conector connector = new Conector();
     Validar_User validar;
@@ -37,7 +38,7 @@ public final class Registro_User extends javax.swing.JFrame {
 
     public Registro_User() {
         initComponents();
-
+        model = (DefaultTableModel) tbl_user.getModel();
         progressbar.setVisible(false);
         mostrarRol();
         mostrarUser("");
@@ -55,12 +56,10 @@ public final class Registro_User extends javax.swing.JFrame {
 
     }
 
-    
-    
     public void mostrarUser(String busqueda) {
         LinkedList<Validar_User> users = new LinkedList<Validar_User>();
         users = consultas.getListaUser(busqueda);
-        DefaultTableModel model = (DefaultTableModel) tbl_user.getModel();
+
         model.setNumRows(0);
         for (int i = 0; i < users.size(); i++) {
             Object[] row = {
@@ -160,8 +159,8 @@ public final class Registro_User extends javax.swing.JFrame {
         cbb_rol = new RSMaterialComponent.RSComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_user = new javax.swing.JTable();
-        btn_guardar1 = new rojeru_san.RSButtonRiple();
-        btn_guardar2 = new rojeru_san.RSButtonRiple();
+        btn_modificar = new rojeru_san.RSButtonRiple();
+        btn_eliminar = new rojeru_san.RSButtonRiple();
         txt_busqueda = new rojeru_san.RSMTextFull();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -234,21 +233,21 @@ public final class Registro_User extends javax.swing.JFrame {
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 120, 850, 110));
 
-        btn_guardar1.setText("Modificar");
-        btn_guardar1.addActionListener(new java.awt.event.ActionListener() {
+        btn_modificar.setText("Modificar");
+        btn_modificar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_guardar1ActionPerformed(evt);
+                btn_modificarActionPerformed(evt);
             }
         });
-        jPanel1.add(btn_guardar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 250, 140, -1));
+        jPanel1.add(btn_modificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 250, 140, -1));
 
-        btn_guardar2.setText("Eliminar");
-        btn_guardar2.addActionListener(new java.awt.event.ActionListener() {
+        btn_eliminar.setText("Eliminar");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_guardar2ActionPerformed(evt);
+                btn_eliminarActionPerformed(evt);
             }
         });
-        jPanel1.add(btn_guardar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 250, 140, -1));
+        jPanel1.add(btn_eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 250, 140, -1));
 
         txt_busqueda.setPlaceholder("Buscar...");
         txt_busqueda.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -295,16 +294,36 @@ public final class Registro_User extends javax.swing.JFrame {
 
     }//GEN-LAST:event_cbb_rolFocusGained
 
-    private void btn_guardar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_guardar1ActionPerformed
+    private void btn_modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_modificarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_guardar1ActionPerformed
+    }//GEN-LAST:event_btn_modificarActionPerformed
 
-    private void btn_guardar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_guardar2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_guardar2ActionPerformed
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+    borrarUser();
+    }//GEN-LAST:event_btn_eliminarActionPerformed
 
+    public void borrarUser(){
+       int row =tbl_user.getSelectedRow();
+      
+       if(row<0){
+           JOptionPane.showMessageDialog(null,"No se ha seleccionado usuario","Warning",2);
+           
+       }else{
+            int id=(int)model.getValueAt(row, 0);
+            System.out.print(id);
+           int conf=JOptionPane.showConfirmDialog(null,"Desea eliminar usuario?","Mensaje",JOptionPane.OK_OPTION);
+           if(conf==0){
+               
+               JOptionPane.showMessageDialog(null,
+                       consultas.deleteUser(id) ? "Usuario Eliminado":"Usuario no eliminado",
+                       "Mensaje",
+                       consultas.deleteUser(id) ? JOptionPane.INFORMATION_MESSAGE:JOptionPane.WARNING_MESSAGE);
+               mostrarUser("");
+           }
+       }
+    }
     private void txt_busquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_busquedaKeyReleased
-         mostrarUser(txt_busqueda.getText());
+        mostrarUser(txt_busqueda.getText());
     }//GEN-LAST:event_txt_busquedaKeyReleased
 
     /**
@@ -337,9 +356,9 @@ public final class Registro_User extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private rojeru_san.RSButtonRiple btn_eliminar;
     private rojeru_san.RSButtonRiple btn_guardar;
-    private rojeru_san.RSButtonRiple btn_guardar1;
-    private rojeru_san.RSButtonRiple btn_guardar2;
+    private rojeru_san.RSButtonRiple btn_modificar;
     private RSMaterialComponent.RSComboBox cbb_rol;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

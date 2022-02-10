@@ -11,7 +11,8 @@ package sistema_ventas.Clases;
  */
 public class Consultas_Sql {
     public final String INSERT_USER="insert into tbl_user(id,nombre,apellido,correo,contrasenia,tipo_rol) value(?,?,?,?,?,?)"; 
-    public final String DELETE_USER="DELETE FROM tbl_user WHERE id=";
+    public final String DELETE_USER="DELETE FROM `tbl_user` WHERE id = ?";
+    
 
     public String getREAD_ROL() {
         return READ_ROL;

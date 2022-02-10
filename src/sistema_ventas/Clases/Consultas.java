@@ -74,16 +74,14 @@ public class Consultas {
 
     public LinkedList<Validar_User> getListaUser(String busqueda) {
         LinkedList lista = new LinkedList<Validar_User>();
-        
-        if(busqueda.isEmpty()){
-            sql_data= sql.getREAD_USER();
-        
-        }else{
-            sql_data=sql.getREAD_USER()+" WHERE nombre like '%"+busqueda+"%' OR apellido like '%"+busqueda+"%'";
+
+        if (busqueda.isEmpty()) {
+            sql_data = sql.getREAD_USER();
+
+        } else {
+            sql_data = sql.getREAD_USER() + " WHERE nombre like '%" + busqueda + "%' OR apellido like '%" + busqueda + "%'";
         }
-        
-     
-        
+
         Validar_User user;
         try {
 
@@ -95,8 +93,8 @@ public class Consultas {
                         result.getString(2),
                         result.getString(3),
                         result.getString(4),
-                         "",
-                         "",
+                        "",
+                        "",
                         result.getInt(6)
                 );
                 lista.add(user);
@@ -115,16 +113,38 @@ public class Consultas {
 
             ResultSet result = sentenciasSql(sql_data);
             while (result.next()) {
-                   lista.add(result.getString("rol"));
-                   
+                lista.add(result.getString("rol"));
+
             }
 
             return lista;
         } catch (SQLException ex) {
             Logger.getLogger(Consultas.class.getName()).log(Level.SEVERE, null, ex);
-              return null;
+            return null;
         }
-      
+
     }
+    
+    
+    public boolean deleteUser(int id){
+        sql_data=sql.getDELETE_USER();
+        int estado;
+        try {
+            PreparedStatement prepared=conector.Conexion().prepareStatement(sql_data);
+            prepared.setInt(1,id);
+            estado=prepared.executeUpdate();
+            
+            return estado==1;
+        } catch (SQLException ex) {
+            Logger.getLogger(Consultas.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+      
+        
+    }
+
+   
+    
 
 }
