@@ -4,6 +4,7 @@
  */
 package sistema_ventas.Clases;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -25,6 +26,7 @@ public class Consultas {
 
     Conector conector = new Conector();
     Consultas_Sql sql = new Consultas_Sql();
+    HashTextTest hash = new HashTextTest();
 
     public Consultas() {
 
@@ -72,6 +74,7 @@ public class Consultas {
 
     }
 
+    //metodo para retornar usuarios
     public LinkedList<Validar_User> getListaUser(String busqueda) {
         LinkedList lista = new LinkedList<Validar_User>();
 
@@ -124,27 +127,51 @@ public class Consultas {
         }
 
     }
-    
-    
-    public boolean deleteUser(int id){
-        sql_data=sql.getDELETE_USER();
+
+    public boolean deleteUser(int id) {
+        sql_data = sql.getDELETE_USER();
         int estado;
         try {
-            PreparedStatement prepared=conector.Conexion().prepareStatement(sql_data);
-            prepared.setInt(1,id);
-            estado=prepared.executeUpdate();
-            
-            return estado==1;
+            PreparedStatement prepared = conector.Conexion().prepareStatement(sql_data);
+            prepared.setInt(1, id);
+            estado = prepared.executeUpdate();
+
+            return estado == 1;
         } catch (SQLException ex) {
             Logger.getLogger(Consultas.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-        
-      
-        
+
     }
 
-   
-    
+    public boolean saveUpdateUser(int id, String nombre, String apellido, String correo, String password, int rol) throws NoSuchAlgorithmException {
+        PreparedStatement prepared;
+        try {
+            if (id == 0) {
+                prepared = conector.Conexion()
+                        .prepareStatement(sql.getINSERT_USER());
+                prepared.setInt(1, id);
+                prepared.setString(2, nombre);
+                prepared.setString(3, apellido);
+                prepared.setString(4, correo);
+                prepared.setString(5, hash.sha1(password));
+                prepared.setInt(6, rol);
+            } else {
+                prepared = conector.Conexion().prepareStatement(sql.getUPDATE_USER());
+                prepared.setString(1, nombre);
+                prepared.setString(2, apellido);
+                prepared.setString(3, correo);
+                prepared.setString(4, hash.sha1(password));
+                prepared.setInt(5, rol);
+                prepared.setInt(6, id);
+            }
+
+            return prepared.executeUpdate() == 1;
+        } catch (SQLException ex) {
+            Logger.getLogger(Consultas.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+
+    }
 
 }

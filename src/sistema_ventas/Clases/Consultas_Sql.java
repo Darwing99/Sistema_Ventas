@@ -12,7 +12,11 @@ package sistema_ventas.Clases;
 public class Consultas_Sql {
     public final String INSERT_USER="insert into tbl_user(id,nombre,apellido,correo,contrasenia,tipo_rol) value(?,?,?,?,?,?)"; 
     public final String DELETE_USER="DELETE FROM `tbl_user` WHERE id = ?";
-    
+    public final String UPDATE_USER="UPDATE `tbl_user` SET `nombre`=?,`apellido`=?,`correo`=?,`contrasenia`=?,`tipo_rol`=? WHERE id=?";
+
+    public String getUPDATE_USER() {
+        return UPDATE_USER;
+    }
 
     public String getREAD_ROL() {
         return READ_ROL;

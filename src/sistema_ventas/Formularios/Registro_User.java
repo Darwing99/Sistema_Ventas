@@ -29,12 +29,14 @@ import sistema_ventas.Clases.Validar_User;
 public final class Registro_User extends javax.swing.JFrame {
 
     DefaultTableModel model = null;
-    HashTextTest hash = new HashTextTest();
+
     Conector connector = new Conector();
     Validar_User validar;
     Consultas consultas = new Consultas();
     Consultas_Sql sql = new Consultas_Sql();
     ArrayList<String> tipo_rol = null;
+
+    int id_user = 0;
 
     public Registro_User() {
         initComponents();
@@ -74,12 +76,12 @@ public final class Registro_User extends javax.swing.JFrame {
 
     }
 
-    public void guardarDatos() throws NoSuchAlgorithmException {
+    public void saveorupdateDatos() throws NoSuchAlgorithmException {
         progressbar.setVisible(true);
         String item = cbb_rol.getSelectedItem().toString();
         System.out.print(String.valueOf(consultas.RolUser(item)));
         validar = new Validar_User(
-                0,
+                id_user,
                 txt_nombre.getText(),
                 txt_apellido.getText(),
                 txt_correo.getText(),
@@ -115,25 +117,18 @@ public final class Registro_User extends javax.swing.JFrame {
         if (validar.getContrasenia().length() > 8) {
             if ((validar.getContrasenia()).equals(validar.getConf_contrasenia())) {
                 progressbar.setValue(20);
-                try {
 
-                    PreparedStatement prepared = connector.Conexion()
-                            .prepareStatement(sql.getINSERT_USER());
-                    progressbar.setValue(40);
-                    prepared.setInt(1, validar.getId());
-                    prepared.setString(2, validar.getNombre());
-                    prepared.setString(3, validar.getApellido());
-                    prepared.setString(4, validar.getCorreo());
-                    prepared.setString(5, hash.sha1(validar.getContrasenia()));
-                    prepared.setInt(6, validar.getRol());
+                boolean estado = consultas.saveUpdateUser(validar.getId(),
+                        validar.getNombre(),
+                        validar.getApellido(),
+                        validar.getCorreo(),
+                        validar.getContrasenia(),
+                        validar.getRol());
+                JOptionPane.showMessageDialog(null, estado ? "Guardado" : "no guardado", "Registro de usuario", JOptionPane.INFORMATION_MESSAGE);
+               
+                mostrarUser("");
+                limpiarCampos();
 
-                    int valor = prepared.executeUpdate();
-
-                    JOptionPane.showMessageDialog(null, valor == 1 ? "Guardado" : "no guardado", "Registro de usuario", JOptionPane.INFORMATION_MESSAGE);
-                    mostrarUser("");
-                } catch (SQLException ex) {
-                    Logger.getLogger(Registro_User.class.getName()).log(Level.SEVERE, null, ex);
-                }
             } else {
                 JOptionPane.showMessageDialog(null, "Contrasenia distinta", "validacion", JOptionPane.WARNING_MESSAGE);
             }
@@ -274,10 +269,21 @@ public final class Registro_User extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+   public void limpiarCampos() {
+        txt_nombre.setText("");
+        txt_apellido.setText("");
+        txt_correo.setText("");
+        txt_nombre.setText("");
+        txt_contrasenia.setText("");
+        txt_conf_contrasenia.setText("");
+        id_user = 0;
+        cbb_rol.setSelectedIndex(0);
+        btn_guardar.setText("Guardar Usuario");
+    }
 
     private void btn_guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_guardarActionPerformed
         try {
-            guardarDatos();
+            saveorupdateDatos();
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(Registro_User.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -295,32 +301,49 @@ public final class Registro_User extends javax.swing.JFrame {
     }//GEN-LAST:event_cbb_rolFocusGained
 
     private void btn_modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_modificarActionPerformed
-        // TODO add your handling code here:
+        modificarUser();
+
     }//GEN-LAST:event_btn_modificarActionPerformed
 
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
-    borrarUser();
+        borrarUser();
     }//GEN-LAST:event_btn_eliminarActionPerformed
 
-    public void borrarUser(){
-       int row =tbl_user.getSelectedRow();
-      
-       if(row<0){
-           JOptionPane.showMessageDialog(null,"No se ha seleccionado usuario","Warning",2);
-           
-       }else{
-            int id=(int)model.getValueAt(row, 0);
+    public void modificarUser() {
+        int row = tbl_user.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(null, "No se ha seleccionado usuario", "Warning", 2);
+
+        } else {
+            id_user = (int) model.getValueAt(row, 0);
+            txt_nombre.setText((String) model.getValueAt(row, 1));
+            txt_apellido.setText((String) model.getValueAt(row, 2));
+            txt_correo.setText((String) model.getValueAt(row, 3));
+            btn_guardar.setText("Actualizar Usuario");
+
+        }
+
+    }
+
+    public void borrarUser() {
+        int row = tbl_user.getSelectedRow();
+
+        if (row < 0) {
+            JOptionPane.showMessageDialog(null, "No se ha seleccionado usuario", "Warning", 2);
+
+        } else {
+            int id = (int) model.getValueAt(row, 0);
             System.out.print(id);
-           int conf=JOptionPane.showConfirmDialog(null,"Desea eliminar usuario?","Mensaje",JOptionPane.OK_OPTION);
-           if(conf==0){
-               
-               JOptionPane.showMessageDialog(null,
-                       consultas.deleteUser(id) ? "Usuario Eliminado":"Usuario no eliminado",
-                       "Mensaje",
-                       consultas.deleteUser(id) ? JOptionPane.INFORMATION_MESSAGE:JOptionPane.WARNING_MESSAGE);
-               mostrarUser("");
-           }
-       }
+            int conf = JOptionPane.showConfirmDialog(null, "Desea eliminar usuario?", "Mensaje", JOptionPane.OK_OPTION);
+            if (conf == 0) {
+
+                JOptionPane.showMessageDialog(null,
+                        consultas.deleteUser(id) ? "Usuario Eliminado" : "Usuario no eliminado",
+                        "Mensaje",
+                        consultas.deleteUser(id) ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.WARNING_MESSAGE);
+                mostrarUser("");
+            }
+        }
     }
     private void txt_busquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_busquedaKeyReleased
         mostrarUser(txt_busqueda.getText());
